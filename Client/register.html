@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JWT-Auth</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+  <div class="Header">
+    <h2>JWT-AUTH SYSTEM</h2>
+    <p>When the New user register to page then get The Email Notification , And Also Added Email-Otp Verification</p>
+  </div>
+
+  <section class="register">
+    <div>
+      <h1>Register Now</h1>
+      <form id="registerForm">
+        <label>Name</label>
+        <input type="text" placeholder="Enter Your Name" name="name" id="name" required />
+        
+        <label>Enter Your Email-Id</label>
+        <input type="email" placeholder="Enter your Mail" name="email" id="email" required />
+        
+        <label>Enter Your Password</label>
+        <input type="password" placeholder="Enter your Password" name="password" id="password" required />
+
+        <div class="button">
+          <button type="submit">Register</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    const API_BASE = "http://localhost:4000";
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          alert(data.message || 'Registration failed');
+          return;
+        }
+
+        if (data.token) localStorage.setItem('token', data.token);
+
+        alert('Registered! Check your email for welcome mail and OTP (if sent).');
+        window.location.href = '/Client/login.html';
+      } catch (err) {
+        alert('Network error');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+
+</html>

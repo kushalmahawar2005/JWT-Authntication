@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+  <section class="Login">
+    <div>
+      <h1>Login Now </h1>
+      <form id="loginForm">
+
+        <label>Enter Your Email-Id</label>
+        <input type="email" placeholder="Enter your Mail" name="email" id="email" required />
+        
+        <label>Enter Your Password</label>
+        <input type="password" placeholder="Enter your Password" name="password" id="password" required />
+        <div class="button">
+          <button type="submit">Login</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    const API_BASE = "http://localhost:4000";
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          alert(data.message || 'Login failed');
+          return;
+        }
+
+        if (data.token) localStorage.setItem('token', data.token);
+
+        alert('Login Successfully');
+        window.location.href = '/Client/dashboard.html';
+      } catch (err) {
+        alert('Network error');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
